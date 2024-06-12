@@ -124,7 +124,7 @@ MainContentComponent::MainContentComponent(MainWindow & mainWindow,
         addAndMakeVisible(mMenuBar.get());
 
         // SpeakerViewComponent 3D view
-        mSpeakerViewComponent.reset(new SpeakerViewComponent(*this));
+        mSpeakerViewComponent.reset(new SpeakerViewComponent(*this, mData.project.udpOutputPort));
 
         // Box Main
         mMainLayout
@@ -2062,6 +2062,33 @@ void MainContentComponent::setOscPort(int const newOscPort)
     }
     mOscInput->closeConnection();
     mOscInput->startConnection(newOscPort);
+}
+
+//==============================================================================
+void MainContentComponent::setUdpInputPort(int const newUdpInputPort)
+{
+    juce::ScopedWriteLock const lock{ mLock };
+    mData.project.udpInputPort = newUdpInputPort;
+
+    if (!mSpeakerViewComponent) {
+        return;
+    }
+    mSpeakerViewComponent->stopSpeakerViewNetworking();
+    mSpeakerViewComponent->setUdpInputPort(newUdpInputPort);
+    mSpeakerViewComponent->startSpeakerViewNetworking();
+}
+
+//==============================================================================
+void MainContentComponent::setUdpOutputPort(int const newUdpOutputPort)
+{
+    juce::ScopedWriteLock const lock{ mLock };
+    mData.project.udpOutputPort = newUdpOutputPort;
+    if (!mSpeakerViewComponent) {
+        return;
+    }
+    mSpeakerViewComponent->stopSpeakerViewNetworking();
+    mSpeakerViewComponent.reset(new SpeakerViewComponent(*this, mData.project.udpOutputPort));
+    mSpeakerViewComponent->startSpeakerViewNetworking();
 }
 
 //==============================================================================

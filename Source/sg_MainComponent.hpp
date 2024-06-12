@@ -173,6 +173,8 @@ public:
     void setSpeakerGain(output_patch_t outputPatch, dbfs_t gain);
     void setSpeakerHighPassFreq(output_patch_t outputPatch, hz_t freq);
     void setOscPort(int newOscPort);
+    void setUdpInputPort(int newUdpInputPort);
+    void setUdpOutputPort(int newUdpOutputPort);
     void setSpeakerSetupDiffusion(float diffusion);
 
     void setPinkNoiseGain(tl::optional<dbfs_t> gain);

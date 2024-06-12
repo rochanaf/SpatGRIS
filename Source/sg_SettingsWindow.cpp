@@ -165,10 +165,25 @@ SettingsComponent::SettingsComponent(MainContentComponent & parent, int const os
 SettingsComponent::~SettingsComponent()
 {
     auto const newOscPort{ mOscInputPortTextEditor.getText().getIntValue() };
-    if (newOscPort == mOscPortWhenLoaded) {
+    auto const newUdpInputPort{ mUdpInputPortTextEditor.getText().getIntValue() };
+    auto const newUdpOutputPort{ mUdpOutputPortTextEditor.getText().getIntValue() };
+    
+    if (newOscPort == mOscPortWhenLoaded &&
+        newUdpInputPort == mUdpInputPortWhenLoaded &&
+        newUdpOutputPort == mUdpOutputPortWhenLoaded) {
         return;
     }
-    mMainContentComponent.setOscPort(newOscPort);
+    
+    auto updatePort = [](int newPort, int& currentPort, auto setPort) {
+        if (newPort != currentPort) {
+            setPort(newPort);
+            currentPort = newPort;
+        }
+    };
+    
+    updatePort(newOscPort, mOscPortWhenLoaded, [&](int port) { mMainContentComponent.setOscPort(port); });
+    updatePort(newUdpInputPort, mUdpInputPortWhenLoaded, [&](int port) { mMainContentComponent.setUdpInputPort(port); });
+    updatePort(newUdpOutputPort, mUdpOutputPortWhenLoaded, [&](int port) { mMainContentComponent.setUdpOutputPort(port); });
 }
 
 //==============================================================================

@@ -58,8 +58,10 @@ public:
     //==============================================================================
     static constexpr auto SPHERE_RADIUS = 0.03f;
     static constexpr auto HALF_SPHERE_RADIUS = SPHERE_RADIUS / 2.0f;
+    
+    int udpInputPort = DEFAULT_UDP_INPUT_PORT;
     //==============================================================================
-    explicit SpeakerViewComponent(MainContentComponent & mainContentComponent);
+    explicit SpeakerViewComponent(MainContentComponent & mainContentComponent, int udpOutputPort);
 
     ~SpeakerViewComponent() override;
 
@@ -77,6 +79,7 @@ public:
     void setConfig(ViewportConfig const & config, SourcesData const & sources);
     void setCameraPosition(CartesianVector const & position) noexcept;
     void setTriplets(juce::Array<Triplet> triplets) noexcept;
+    void setUdpInputPort(int newUdpInputPort);
 
     void shouldKillSpeakerViewProcess(bool shouldKill);
 

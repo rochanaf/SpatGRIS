@@ -26,10 +26,10 @@
 namespace gris
 {
 //==============================================================================
-SpeakerViewComponent::SpeakerViewComponent(MainContentComponent & mainContentComponent)
+SpeakerViewComponent::SpeakerViewComponent(MainContentComponent & mainContentComponent,int udpOutputPort)
     : mMainContentComponent(mainContentComponent)
 {
-    mUdpReceiverSocket.bindToPort(DEFAULT_UDP_OUTPUT_PORT, "127.0.0.1");
+    mUdpReceiverSocket.bindToPort(udpOutputPort, "127.0.0.1");
 }
 
 //==============================================================================
@@ -104,6 +104,12 @@ void SpeakerViewComponent::setTriplets(juce::Array<Triplet> triplets) noexcept
     JUCE_ASSERT_MESSAGE_THREAD
     juce::ScopedLock const lock{ mLock };
     mData.coldData.triplets = std::move(triplets);
+}
+
+//==============================================================================
+void SpeakerViewComponent::setUdpInputPort(int newUdpInputPort)
+{
+    udpInputPort = newUdpInputPort;
 }
 
 //==============================================================================
@@ -397,13 +403,13 @@ void SpeakerViewComponent::sendUDP()
     juce::DatagramSocket udpSenderSocket;
     juce::String remoteHostname = "127.0.0.1";
 
-    udpSenderSocket.bindToPort(DEFAULT_UDP_INPUT_PORT, remoteHostname);
+    udpSenderSocket.bindToPort(udpInputPort, remoteHostname);
 
     juce::String jsonSourcesStr = juce::JSON::toString(juce::var(mJsonSources));
     if (udpSenderSocket.waitUntilReady(true, 0) == 0) {
         [[maybe_unused]] int numBytesWrittenSources
             = udpSenderSocket.write(remoteHostname,
-                                    DEFAULT_UDP_INPUT_PORT,
+                                    udpInputPort,
                                     jsonSourcesStr.toStdString().c_str(),
                                     static_cast<int>(jsonSourcesStr.toStdString().length()));
         jassert(!(numBytesWrittenSources < 0));
@@ -413,7 +419,7 @@ void SpeakerViewComponent::sendUDP()
     if (udpSenderSocket.waitUntilReady(true, 0) == 0) {
         [[maybe_unused]] int numBytesWrittenSpeakers
             = udpSenderSocket.write(remoteHostname,
-                                    DEFAULT_UDP_INPUT_PORT,
+                                    udpInputPort,
                                     jsonSpeakersStr.toStdString().c_str(),
                                     static_cast<int>(jsonSpeakersStr.toStdString().length()));
         jassert(!(numBytesWrittenSpeakers < 0));
@@ -425,7 +431,7 @@ void SpeakerViewComponent::sendUDP()
         if (udpSenderSocket.waitUntilReady(true, 0) == 0) {
             [[maybe_unused]] int numBytesWrittenSGInfos
                 = udpSenderSocket.write(remoteHostname,
-                                        DEFAULT_UDP_INPUT_PORT,
+                                        udpInputPort,
                                         jsonSGInfosStr.toStdString().c_str(),
                                         static_cast<int>(jsonSGInfosStr.toStdString().length()));
             jassert(!(numBytesWrittenSGInfos < 0));
