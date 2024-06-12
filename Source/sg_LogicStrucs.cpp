@@ -76,6 +76,8 @@ juce::String const ProjectData::XmlTags::SOURCES = "SOURCES";
 juce::String const ProjectData::XmlTags::MASTER_GAIN = "MASTER_GAIN";
 juce::String const ProjectData::XmlTags::GAIN_INTERPOLATION = "GAIN_INTERPOLATION";
 juce::String const ProjectData::XmlTags::OSC_PORT = "OSC_PORT";
+juce::String const ProjectData::XmlTags::UDP_OUTPUT_PORT = "UDP_OUTPUT_PORT";
+juce::String const ProjectData::XmlTags::UDP_INPUT_PORT = "UDP_INPUT_PORT";
 
 juce::String const AppData::XmlTags::MAIN_TAG = "SPAT_GRIS_APP_DATA";
 juce::String const AppData::XmlTags::LAST_SPEAKER_SETUP = "LAST_SPEAKER_SETUP";
@@ -617,14 +619,16 @@ std::unique_ptr<juce::XmlElement> ProjectData::toXml() const
     result->setAttribute(XmlTags::GAIN_INTERPOLATION, spatGainsInterpolation);
     result->setAttribute(XmlTags::VERSION, SPAT_GRIS_VERSION.toString());
     result->setAttribute(XmlTags::SPAT_MODE, spatModeToString(spatMode));
-
+    result->setAttribute(XmlTags::UDP_INPUT_PORT, udpInputPort);
+    result->setAttribute(XmlTags::UDP_OUTPUT_PORT, udpOutputPort);
+    
     return result;
 }
 
 //==============================================================================
 tl::optional<ProjectData> ProjectData::fromXml(juce::XmlElement const & xml)
 {
-    juce::StringArray const requiredTags{ XmlTags::MASTER_GAIN, XmlTags::GAIN_INTERPOLATION, XmlTags::OSC_PORT };
+    juce::StringArray const requiredTags{ XmlTags::MASTER_GAIN, XmlTags::GAIN_INTERPOLATION, XmlTags::OSC_PORT, XmlTags::UDP_INPUT_PORT, XmlTags::UDP_OUTPUT_PORT };
     if (xml.getTagName() != XmlTags::MAIN_TAG
         || !std::all_of(requiredTags.begin(), requiredTags.end(), [&](juce::String const & string) {
                return xml.hasAttribute(string);

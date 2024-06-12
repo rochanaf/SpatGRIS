@@ -40,7 +40,9 @@ class SettingsComponent final
     GrisLookAndFeel & mLookAndFeel;
 
     int mOscPortWhenLoaded;
-
+    int mUdpInputPortWhenLoaded;
+    int mUdpOutputPortWhenLoaded;
+    
     //==============================================================================
     juce::Label mAudioSectionLabel{ "", "Audio Settings" };
 
@@ -64,12 +66,23 @@ class SettingsComponent final
 
     juce::Label mOscInputPortLabel{ "", "OSC Input Port :" };
     juce::TextEditor mOscInputPortTextEditor{};
+    
+    juce::Label mSpeakerViewSectionLabel{ "", "SpeakerView" };
+
+    juce::Label mSpeakerViewIpAddressLabel{ "", "IP Address :" };
+    juce::TextEditor mSpeakerViewIpAddressTextEditor{};
+    
+    juce::Label mUdpInputPortLabel{ "", "UDP Input Port :" };
+    juce::TextEditor mUdpInputPortTextEditor{};
+    
+    juce::Label mUdpOutputPortLabel{ "", "UDP Output Port :" };
+    juce::TextEditor mUdpOutputPortTextEditor{};
 
     juce::TextButton mSaveSettingsButton;
 
 public:
     //==============================================================================
-    SettingsComponent(MainContentComponent & parent, int oscPort, GrisLookAndFeel & lookAndFeel);
+    SettingsComponent(MainContentComponent & parent, int oscPort, int udpInputPort, int udpOutputPort, GrisLookAndFeel & lookAndFeel);
     //==============================================================================
     SettingsComponent() = delete;
     ~SettingsComponent() override;
@@ -98,7 +111,7 @@ class SettingsWindow final : public juce::DocumentWindow
 
 public:
     //==============================================================================
-    SettingsWindow(MainContentComponent & parent, int oscPort, GrisLookAndFeel & grisLookAndFeel);
+    SettingsWindow(MainContentComponent & parent, int oscPort, int udpInputPort, int udpOutputPort, GrisLookAndFeel & grisLookAndFeel);
     //==============================================================================
     SettingsWindow() = delete;
     ~SettingsWindow() override = default;

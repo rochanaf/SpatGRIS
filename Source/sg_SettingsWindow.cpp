@@ -51,10 +51,12 @@ bool isNotPowerOfTwo(int const value)
 } // namespace
 
 //==============================================================================
-SettingsComponent::SettingsComponent(MainContentComponent & parent, int const oscPort, GrisLookAndFeel & lookAndFeel)
+SettingsComponent::SettingsComponent(MainContentComponent & parent, int const oscPort, int const udpInputPort, int const udpOutputPort, GrisLookAndFeel & lookAndFeel)
     : mMainContentComponent(parent)
     , mLookAndFeel(lookAndFeel)
     , mOscPortWhenLoaded(oscPort)
+    , mUdpInputPortWhenLoaded(udpInputPort)
+    , mUdpOutputPortWhenLoaded(udpOutputPort)
 {
     auto initLabel = [this](juce::Label & label) {
         label.setJustificationType(juce::Justification::Flags::centredRight);
@@ -114,6 +116,38 @@ SettingsComponent::SettingsComponent(MainContentComponent & parent, int const os
     mOscInputPortTextEditor.setInputRestrictions(5, "0123456789");
     mOscInputPortTextEditor.setText(juce::String{ oscPort });
     addAndMakeVisible(mOscInputPortTextEditor);
+    
+    initSectionLabel(mSpeakerViewSectionLabel);
+
+    initLabel(mSpeakerViewIpAddressLabel);
+    mSpeakerViewIpAddressTextEditor.setTooltip("SpeakerView IP Address");
+    mSpeakerViewIpAddressTextEditor.setTextToShowWhenEmpty("", mLookAndFeel.getOffColour());
+    mSpeakerViewIpAddressTextEditor.setColour(juce::ToggleButton::textColourId, mLookAndFeel.getFontColour());
+    mSpeakerViewIpAddressTextEditor.setLookAndFeel(&mLookAndFeel);
+    mSpeakerViewIpAddressTextEditor.setBounds(0, 0, RIGHT_COL_WIDTH, COMPONENT_HEIGHT);
+
+    
+    addAndMakeVisible(mSpeakerViewIpAddressLabel);
+    
+    initLabel(mUdpInputPortLabel);
+    mUdpInputPortTextEditor.setTooltip("SpeakerView UDP Input");
+    mUdpInputPortTextEditor.setTextToShowWhenEmpty("", mLookAndFeel.getOffColour());
+    mUdpInputPortTextEditor.setColour(juce::ToggleButton::textColourId, mLookAndFeel.getFontColour());
+    mUdpInputPortTextEditor.setLookAndFeel(&mLookAndFeel);
+    mUdpInputPortTextEditor.setBounds(0, 0, RIGHT_COL_WIDTH, COMPONENT_HEIGHT);
+    mUdpInputPortTextEditor.setInputRestrictions(5, "0123456789");
+    mUdpInputPortTextEditor.setText(juce::String{ udpInputPort });
+    addAndMakeVisible(mUdpInputPortTextEditor);
+    
+    initLabel(mUdpOutputPortLabel);
+    mUdpOutputPortTextEditor.setTooltip("SpeakerView UDP Output");
+    mUdpOutputPortTextEditor.setTextToShowWhenEmpty("", mLookAndFeel.getOffColour());
+    mUdpOutputPortTextEditor.setColour(juce::ToggleButton::textColourId, mLookAndFeel.getFontColour());
+    mUdpOutputPortTextEditor.setLookAndFeel(&mLookAndFeel);
+    mUdpOutputPortTextEditor.setBounds(0, 0, RIGHT_COL_WIDTH, COMPONENT_HEIGHT);
+    mUdpOutputPortTextEditor.setInputRestrictions(5, "0123456789");
+    mUdpOutputPortTextEditor.setText(juce::String{ udpOutputPort });
+    addAndMakeVisible(mUdpOutputPortTextEditor);
 
     //==============================================================================
     mSaveSettingsButton.setButtonText("Apply");
@@ -202,8 +236,23 @@ void SettingsComponent::placeComponents()
 
     mOscInputPortLabel.setTopLeftPosition(LEFT_COL_START, yPosition);
     mOscInputPortTextEditor.setTopLeftPosition(RIGHT_COL_START, yPosition);
-    skipSection();
+    skip();
 
+    mSpeakerViewSectionLabel.setTopLeftPosition(LEFT_COL_START + PADDING, yPosition);
+    skip();
+    
+    mSpeakerViewIpAddressLabel.setTopLeftPosition(LEFT_COL_START, yPosition);
+    mSpeakerViewIpAddressTextEditor.setTopLeftPosition(RIGHT_COL_START, yPosition);
+    skip();
+
+    mUdpInputPortLabel.setTopLeftPosition(LEFT_COL_START, yPosition);
+    mUdpInputPortTextEditor.setTopLeftPosition(RIGHT_COL_START, yPosition);
+    skip();
+    
+    mUdpOutputPortLabel.setTopLeftPosition(LEFT_COL_START, yPosition);
+    mUdpOutputPortTextEditor.setTopLeftPosition(RIGHT_COL_START, yPosition);
+    skipSection();
+    
     mSaveSettingsButton.setTopRightPosition(RIGHT_COL_START + RIGHT_COL_WIDTH, yPosition);
 
     //==============================================================================
@@ -337,10 +386,10 @@ void SettingsComponent::comboBoxChanged(juce::ComboBox * comboBoxThatHasChanged)
 }
 
 //==============================================================================
-SettingsWindow::SettingsWindow(MainContentComponent & parent, int const oscPort, GrisLookAndFeel & grisLookAndFeel)
+SettingsWindow::SettingsWindow(MainContentComponent & parent, int const oscPort, int const udpInputPort, int const udpOutputPort, GrisLookAndFeel & grisLookAndFeel)
     : DocumentWindow("Settings", grisLookAndFeel.getBackgroundColour(), allButtons)
     , mMainContentComponent(parent)
-    , mPropertiesComponent(parent, oscPort, grisLookAndFeel)
+    , mPropertiesComponent(parent, oscPort,udpInputPort, udpOutputPort, grisLookAndFeel)
 {
     setAlwaysOnTop(true);
     setContentNonOwned(&mPropertiesComponent, true);

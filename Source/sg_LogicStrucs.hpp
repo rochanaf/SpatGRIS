@@ -340,6 +340,8 @@ struct ProjectData {
     SourcesData sources{};
     MbapDistanceAttenuationData mbapDistanceAttenuationData{};
     int oscPort{ DEFAULT_OSC_INPUT_PORT };
+    int udpInputPort{ DEFAULT_UDP_INPUT_PORT };
+    int udpOutputPort{ DEFAULT_UDP_OUTPUT_PORT };
     dbfs_t masterGain{};
     float spatGainsInterpolation{};
     SpatMode spatMode{};
@@ -357,6 +359,9 @@ struct ProjectData {
         static juce::String const MASTER_GAIN;
         static juce::String const GAIN_INTERPOLATION;
         static juce::String const OSC_PORT;
+        static juce::String const UDP_INPUT_PORT;
+        static juce::String const UDP_OUTPUT_PORT;
+
     };
 };
 
